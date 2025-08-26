@@ -1,0 +1,145 @@
+Comparators in Java
+
+When you want to sort a list or array of objects in Java, you usually want to decide how they should be ordered.
+
+Java provides natural ordering for some classes like Integer, String, etc. (e.g., numbers in ascending order)
+
+But if you want custom sorting logic, like sorting people by age, or by frequency of elements, you use a Comparator.
+
+What does a Comparator do?
+
+A Comparator is an object that defines a method:
+
+int compare(T a, T b)
+
+
+It compares two objects a and b.
+
+Returns:
+
+Negative number if a should come before b
+
+Zero if a and b are considered equal in order
+
+Positive number if a should come after b
+
+Why do we need Comparator?
+
+Because sometimes:
+
+You want to sort integers descending (biggest to smallest)
+
+Or sort by some property, e.g. sorting strings by length instead of alphabetically
+
+Or complex conditions, like sorting by frequency first, then by value
+
+How to create and use Comparator?
+1. Using Comparator for integers ascending (default):
+List<Integer> list = Arrays.asList(5, 2, 9, 1);
+
+// Sort naturally (ascending order)
+Collections.sort(list);
+
+// list is now: [1, 2, 5, 9]
+
+2. Using Comparator for integers descending:
+
+You want to sort numbers from largest to smallest.
+
+Collections.sort(list, new Comparator<Integer>() {
+    @Override
+    public int compare(Integer a, Integer b) {
+        return b - a; // descending order
+    }
+});
+
+
+If b > a, b - a is positive → a comes after b
+
+If b < a, b - a is negative → a comes before b
+
+So this sorts descending.
+
+3. Step-by-step explanation of compare(a, b)
+
+Suppose you call:
+
+compare(3, 5)  // a=3, b=5
+
+
+b - a = 5 - 3 = 2 (positive)
+
+So 3 comes after 5 → 5 is before 3 → correct for descending
+
+4. Using Comparator to sort custom objects
+
+Imagine a Person class:
+
+class Person {
+    String name;
+    int age;
+    
+    Person(String n, int a) {
+        name = n;
+        age = a;
+    }
+}
+
+
+You want to sort a list of Person by age ascending:
+
+List<Person> people = ...;
+
+Collections.sort(people, new Comparator<Person>() {
+    public int compare(Person p1, Person p2) {
+        return p1.age - p2.age;  // ascending by age
+    }
+});
+
+Your original Comparator in the frequency problem
+Collections.sort(list, new Comparator<Integer>() {
+    public int compare(Integer a, Integer b) {
+        int freqA = freqMap.get(a);
+        int freqB = freqMap.get(b);
+        if (freqA != freqB) {
+            return freqB - freqA;  // sort by descending frequency
+        } else {
+            return a - b;          // if frequency same, ascending by value
+        }
+    }
+});
+
+
+You compare the frequencies first:
+
+If frequency differs, higher frequency comes first → so freqB - freqA
+
+If frequencies equal, sort by number ascending → a - b
+
+Summary: How to use Comparator
+
+Define how two elements a and b should be ordered by implementing:
+
+int compare(T a, T b)
+
+
+Return:
+
+Negative if a before b
+
+Zero if equal
+
+Positive if a after b
+
+Pass the comparator to Collections.sort() or Arrays.sort().
+
+Extra tip: Lambda expressions (Java 8+)
+
+You can write shorter comparators like this:
+
+Collections.sort(list, (a, b) -> {
+    int freqA = freqMap.get(a);
+    int freqB = freqMap.get(b);
+    if (freqA != freqB) return freqB - freqA;
+    return a - b;
+});
